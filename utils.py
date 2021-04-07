@@ -145,7 +145,7 @@ def parse_indices(obj, min_val=None, max_val=None):
 
     return indices
 
-def get_weights(generator, layer_idx='all'):
+def get_weights(generator, layer_idx='all', apply_norm=True):
     """Obtains weight matrix from specified generator and layer selection. Adapted from `factorize_weights`
 
     Args:
@@ -182,8 +182,8 @@ def get_weights(generator, layer_idx='all'):
             weight = generator.synthesis.__getattr__(layer_name).style.weight.T
         weights.append(weight.cpu().detach().numpy())
     weight = np.concatenate(weights, axis=1).astype(np.float32)
-    weight = weight / np.linalg.norm(weight, axis=0, keepdims=True) # Q: is normalizing the weight values here necessary?
-
+    if apply_norm:
+        weight = weight / np.linalg.norm(weight, axis=0, keepdims=True) # Q: is normalizing the weight values here necessary?
     return weight
 
 def factorize_weight(generator, layer_idx='all'):
